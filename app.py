@@ -21,7 +21,7 @@ def hello_world():
     return 'Hello World!'
 
 @app.route("/api/upload", methods=['POST'])
-def SendMessage():
+def uploadAndConvert():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -54,8 +54,13 @@ def SendMessage():
         return {"id":1,"Username":"admin","Level":"Administrator"} , 200
     return "http://10.0.2.2:5000/upload/image.jpg" , 200
 
-
-
+@app.route("/api/smoother", methods=['GET'])
+def smoother():
+    image = cv2.imread(UPLOAD_FOLDER + '/image.jpg')
+    smoother = render(image, iterations=25, verbose=True)
+    imageio.imwrite('./static/image.jpg', smoother)
+    image = Image.open('./static/image.jpg')
+    image.show()
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
 
