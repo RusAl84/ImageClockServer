@@ -38,7 +38,7 @@ def uploadAndConvert():
         image = cv2.imread(UPLOAD_FOLDER + '/image.jpg')
         # file.save(os.path.join('./static/image.jpg'))
         # abstract = render(image, depth=4, verbose=True)
-        smoother = render(image, iterations=25, verbose=True)
+        smoother = render(image, iterations=35, verbose=True)
         # aa = render(image, anti_aliasing=True, verbose=True)
         # less_detail = render(image, ratio=0.001, verbose=True)
         # more_detail = render(image, ratio=0.00005, verbose=True)
