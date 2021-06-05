@@ -7,6 +7,8 @@ import cv2
 # from scipy.misc import imread, imsave
 # # pip install scipy==1.1.0
 import imageio
+from PIL import Image
+
 UPLOAD_FOLDER = './upload'
 
 if __name__ == '__main__':
@@ -28,6 +30,13 @@ if __name__ == '__main__':
     # imsave(r'./static/image.jpg', abstract)
     # show_img(abstract, "A depth of 4 results in an abstract representation")
     imageio.imwrite('./static/image.jpg', abstract)
-    # cv2.imwrite('./static/image.jpg', abstract)
+    image = Image.open('./static/image.jpg')
+    image.save('./static/image.png')
+
+    image = Image.open('./static/image.png')
+    fimage = Image.open('./static/foreground.png')
+    image.paste(image, (1920, 1440), fimage)
+
+    image.save('./static/image.jpg')
     image = Image.open('./static/image.jpg')
     image.show()
