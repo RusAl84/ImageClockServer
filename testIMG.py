@@ -8,8 +8,31 @@ import cv2
 # # pip install scipy==1.1.0
 import imageio
 from PIL import Image
+import numpy as np
+import cv2
 
 UPLOAD_FOLDER = './upload'
+
+
+def blend_transparent(face_img, overlay_t_img):
+    # Split out the transparency mask from the colour info
+    overlay_img = overlay_t_img[:,:,:3] # Grab the BRG planes
+    overlay_mask = overlay_t_img[:,:,3:]  # And the alpha plane
+
+    # Again calculate the inverse mask
+    background_mask = 255 - overlay_mask
+
+    # Turn the masks into three channel, so we can use them as weights
+    overlay_mask = cv2.cvtColor(overlay_mask, cv2.COLOR_GRAY2BGR)
+    background_mask = cv2.cvtColor(background_mask, cv2.COLOR_GRAY2BGR)
+
+    # Create a masked out face image, and masked out overlay
+    # We convert the images to floating point in range 0.0 - 1.0
+    face_part = (face_img * (1 / 255.0)) * (background_mask * (1 / 255.0))
+    overlay_part = (overlay_img * (1 / 255.0)) * (overlay_mask * (1 / 255.0))
+
+    # And finally just add them together, and rescale it back to an 8bit integer image
+    return np.uint8(cv2.addWeighted(face_part, 255.0, overlay_part, 255.0, 0.0))
 
 if __name__ == '__main__':
     # image = cv2.imread(UPLOAD_FOLDER + '/image.jpg')
@@ -30,13 +53,14 @@ if __name__ == '__main__':
     # imsave(r'./static/image.jpg', abstract)
     # show_img(abstract, "A depth of 4 results in an abstract representation")
     imageio.imwrite('./static/image.jpg', abstract)
-    image = Image.open('./static/image.jpg')
-    image.save('./static/image.png')
 
-    image = Image.open('./static/image.png')
-    fimage = Image.open('./static/foreground.png')
-    image.paste(image, (1920, 1440), fimage)
+    # image = Image.open('./static/image.jpg')
+    # image.save('./static/image.png')
 
-    image.save('./static/image.jpg')
+    background = cv2.imread('./static/image.jpg')
+    overlay = cv2.imread('./static/foreground.png', -1) # Load with transparency
+    result = blend_transparent(background, overlay)
+    cv2.imwrite('./static/image.jpg', result)
+
     image = Image.open('./static/image.jpg')
     image.show()
