@@ -13,7 +13,6 @@ import cv2
 
 UPLOAD_FOLDER = './upload'
 
-
 def blend_transparent(face_img, overlay_t_img):
     # Split out the transparency mask from the colour info
     overlay_img = overlay_t_img[:,:,:3] # Grab the BRG planes
