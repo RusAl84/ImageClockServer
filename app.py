@@ -7,16 +7,19 @@ import cv2
 # from scipy.misc import imread, imsave
 # # pip install scipy==1.1.0
 import imageio
-
-UPLOAD_FOLDER = './upload'
-
-app = Flask(__name__)
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+from flask_cors import CORS
 import imageio
 from PIL import Image
 import numpy as np
 import cv2
+
+UPLOAD_FOLDER = './upload'
+
+app = Flask(__name__)
+cors = CORS(app)
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 def blend_transparent(face_img, overlay_t_img):
     # Split out the transparency mask from the colour info
@@ -83,8 +86,19 @@ def uploadAndConvert():
 
         image = Image.open('./static/image.jpg')
         image.show()
-        return {"id": 1, "Username": "admin", "Level": "Administrator"}, 200
-    return "http://10.0.2.2:5000/upload/image.jpg", 200
+        return "http://localhost:5000/static/image.jpg", 200
+        # return {"id": 1, "Username": "admin", "Level": "Administrator"}, 200
+    return "http://localhost:5000/static/image.jpg", 200
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    for fname in request.files:
+        f = request.files.get(fname)
+        print(f)
+        f.save('./upload/%s' % secure_filename(fname))
+
+    return 'Okay!'
+
 
 
 @app.route("/api/enc", methods=['GET'])
