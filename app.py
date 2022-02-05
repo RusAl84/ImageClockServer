@@ -86,7 +86,7 @@ def upload():
         overlay = cv2.imread('./static/foreground.png', -1)  # Load with transparency
         result = blend_transparent(background, overlay)
         cv2.imwrite('./static/image.jpg', result)
-        # image = Image.open('./static/image.jpg')
+        image = Image.open('./static/image.jpg')
         # image.show()
         return "http://localhost:5000/static/image.jpg", 200
         # return {"id": 1, "Username": "admin", "Level": "Administrator"}, 200
